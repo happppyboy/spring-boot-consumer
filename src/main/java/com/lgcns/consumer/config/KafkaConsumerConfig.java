@@ -3,6 +3,7 @@ package com.lgcns.consumer.config;
 import com.lgcns.consumer.dto.TopicDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -18,15 +19,26 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    // config 속성들은 많이 있음
+    @Value("${cloudaa.kafka.consumer.bootstrap-servers-config}")
+    String bootstrapServersConfig;
+
+    @Value("${cloudaa.kafka.consumer.key-deserializer-class-config}")
+    String KeyDeserializerClassConfig;
+
+    @Value("${cloudaa.kafka.consumer.value-deserializer-class-config}")
+    String ValueDeserialzierClassConfig;
+
+    @Value("${cloudaa.kafka.consumer.group-id-config}")
+    String GroupIdConfig;
+
     @Bean
     public ConsumerFactory<String, TopicDto> consumerFactory() {
 
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost-01:9092,localhost-02:9092,localhost-03:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "foo-1");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServersConfig);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KeyDeserializerClassConfig);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ValueDeserialzierClassConfig);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, GroupIdConfig);
 
         // 들어오는 record 를 객체로 받기 위한 deserializer
         JsonDeserializer<TopicDto> deserializer = new JsonDeserializer<>(TopicDto.class, false);
